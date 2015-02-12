@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "ru.rzn.myasoedov.lingautest"
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField "String", "YANDEX_API_KEY", "\"trnsl.1.1.20150209T181924Z.5c63d140527801af.e4cba19f610445a2d6d99a058f816f0fe1e0931d\""
+        buildConfigField "String", "DB_NAME", "\"DICTIONARY_DB\""
+        buildConfigField "int", "DB_VERSION", "1"
+    }
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.loopj.android:android-async-http:1.4.5'
+    compile 'com.google.code.gson:gson:2.2.4'
+}

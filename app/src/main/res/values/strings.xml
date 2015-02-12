@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LingauTest</string>
+    <string name="no_words">No words in dictionary</string>
+    <string name="empty_word">Please enter word</string>
+    <string name="empty_translate">No translate</string>
+    <string name="action_add_word">Add</string>
+    <string name="action_search">Search</string>
+    <string name="action_translate_word">Translate</string>
+    <string name="wait">Please wait...</string>
+    <string name="translate_code">To</string>
+    <string name="label_selected">selected</string>
+    <string name="action_delete">delete</string>
+
+    <string-array name="languages">
+        <item>en</item>
+        <item>ru</item>
+        <item>de</item>
+    </string-array>
+</resources>
