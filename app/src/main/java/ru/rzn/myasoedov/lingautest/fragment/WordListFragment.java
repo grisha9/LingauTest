@@ -8,9 +8,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-
 import android.text.TextUtils;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,19 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import ru.rzn.myasoedov.lingautest.R;
 import ru.rzn.myasoedov.lingautest.adapter.WordCursorAdapter;
-import ru.rzn.myasoedov.lingautest.db.DictionaryDBHelper;
 import ru.rzn.myasoedov.lingautest.db.DictionaryProvider;
 import ru.rzn.myasoedov.lingautest.db.TranslateWrapper;
 
@@ -42,11 +35,15 @@ public class WordListFragment extends ListFragment implements LoaderManager.Load
         AbsListView.MultiChoiceModeListener {
     public static final String SEARCH_STRING = "search_string";
     private Set<Integer> ids;
+    private String search;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        if (savedInstanceState != null) {
+            search = savedInstanceState.getString(SEARCH_STRING);
+        }
     }
 
     @Override
@@ -87,10 +84,10 @@ public class WordListFragment extends ListFragment implements LoaderManager.Load
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dictionary, menu);
         MenuItem menuItem = (MenuItem) menu.findItem(R.id.action_search);
-        addSearchEvents(menuItem);
+        prepareSearchView(menuItem);
     }
 
-    private void addSearchEvents(MenuItem menuItem) {
+    private void prepareSearchView(MenuItem menuItem) {
         menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -104,7 +101,7 @@ public class WordListFragment extends ListFragment implements LoaderManager.Load
             }
         });
 
-        SearchView searchView = (SearchView) menuItem.getActionView();
+        final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -118,11 +115,23 @@ public class WordListFragment extends ListFragment implements LoaderManager.Load
                 return false;
             }
         });
+
+        if (!TextUtils.isEmpty(search)) {
+            searchView.post(new Runnable() {
+                @Override
+                public void run() {
+                    searchView.setQuery(search, false);
+                    searchView.setIconified(false);
+                }
+            });
+
+        }
     }
 
     private void restartLoader(String searchString) {
         Bundle bundle = new Bundle();
         if (searchString != null) {
+            search = searchString;
             bundle.putString(SEARCH_STRING, searchString);
         }
         getLoaderManager().restartLoader(DictionaryProvider.URI_ALL_WORDS, bundle, this);
@@ -224,5 +233,11 @@ public class WordListFragment extends ListFragment implements LoaderManager.Load
     @Override
     public void onDestroyActionMode(ActionMode mode) {
 
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SEARCH_STRING, search);
     }
 }
